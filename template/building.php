@@ -1,5 +1,8 @@
 <?php /* @var \Rhumsaa\Uuid\Uuid $buildingId */ ?>
 <h1>Welcome to CQRS+ES building</h1>
+<code>
+    <?php var_dump($building) ?>
+</code>
 
 <h2>Check In: </h2>
 <form action="/checkin/<?= $buildingId; ?>" method="post">
@@ -9,6 +12,7 @@
 </form>
 
 <h2>Check Out: </h2>
+
 <form action="/checkout/<?= $buildingId; ?>" method="post">
     <input type="text" name="username" placeholder="Enter your username to checkout" required="required"/>
 
