@@ -67,7 +67,16 @@ call_user_func(function () {
     });
 
     $app->post('/checkin/{buildingId}', function (Request $request, Response $response) use ($sm) : Response {
+        $buildingId = Uuid::fromString($request->getAttribute('buildingId'));
+        $userName = $request->getParsedBody()['username'];
 
+        /** @var CommandBus $commandBus  */
+        $commandBus = $sm->get(CommandBus::class);
+        $command = Command\CheckinUser::fromUserAndBuilding($buildingId, $userName);
+        $commandBus->dispatch($command);
+
+        return $response->withAddedHeader('Location', '/');
+        //return $response;
     });
 
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) : Response {
