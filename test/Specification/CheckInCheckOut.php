@@ -8,6 +8,7 @@ use Assert\Assertion;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Tester\Exception\PendingException;
 use Building\Domain\Aggregate\Building;
+use Building\Domain\DomainEvent\CheckInAnomalyDetected;
 use Building\Domain\DomainEvent\NewBuildingWasRegistered;
 use Building\Domain\DomainEvent\UserCheckedIn;
 use Prooph\EventSourcing\AggregateChanged;
@@ -77,4 +78,26 @@ final class CheckInCheckOut implements Context
 
         return array_shift($this->recordedEvents);
     }
+
+    /**
+     * @Given :username checked into the building
+     */
+    public function checkedIntoTheBuilding($username)
+    {
+        $this->history[] = UserCheckedIn::toBuilding($this->id, $username);
+    }
+
+    /**
+     * @Then a check-in anomaly should have been detected for :username in this building
+     */
+    public function aCheckInAnomalyShouldHaveBeenDetectedForInThisBuilding($username)
+    {
+        /** @var CheckInAnomalyDetected $event */
+        $event = $this->popNextRecordedEvent();
+
+        Assertion::isInstanceOf($event, CheckInAnomalyDetected::class);
+        Assertion::same($event->username(), $username);
+    }
+
+
 }
